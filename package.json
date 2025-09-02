@@ -1,0 +1,28 @@
+{
+  "name": "nano-pos-device",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node server.js",
+    "create-device": "node createDevice.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GuillermoArechiga/nanoPosPro.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GuillermoArechiga/nanoPosPro/issues"
+  },
+  "homepage": "https://github.com/GuillermoArechiga/nanoPosPro#readme",
+  "dependencies": {
+    "@prisma/client": "^6.15.0",
+    "express": "^5.1.0",
+    "node-fetch": "^3.3.2",
+    "prisma": "^6.15.0",
+    "sqlite3": "^5.1.7",
+    "uuid": "^11.1.0"
+  }
+}

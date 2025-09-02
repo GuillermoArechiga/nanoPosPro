@@ -1,0 +1,93 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./nanopos.db"
+}
+
+enum ButtonName {
+  BTN1
+  BTN2
+  BTN3
+  BTN4
+  BTN5
+  BTN6
+  BTN7
+  BTN8
+  BTN9
+  BTN10
+}
+
+enum MetricUnit {
+  UNIT
+  GRAM
+  KILOGRAM
+  LITER
+}
+
+model Device {
+  id           String     @id
+  label        String?
+  location     String?
+  firmware     String?
+  isOnline     Boolean?   
+  synced       Boolean    @default(false)
+  createdAt    DateTime?  @default(now())
+  updatedAt    DateTime?  @updatedAt
+
+  categories   Category[]
+  products     Product[]
+  posEvents    PosEvent[]
+}
+
+model Category {
+  id          String     @id
+  deviceId    String
+  name        String
+  description String?
+  isDeleted   Boolean    @default(false)
+  synced      Boolean    @default(false)
+  createdAt   DateTime?  @default(now())
+  updatedAt   DateTime?  @updatedAt
+
+  device     Device     @relation(fields: [deviceId], references: [id])
+  products   Product[]
+}
+
+model Product {
+  id          String     @id
+  deviceId    String
+  name        String
+  price1      Float
+  price2      Float?
+  price3      Float?
+  metric      MetricUnit
+  sku         String?
+  isActive    Boolean    @default(true)
+  isDeleted   Boolean    @default(false)
+  button      ButtonName
+  synced      Boolean    @default(false)
+  categoryId  String
+  createdAt   DateTime?  @default(now())
+  updatedAt   DateTime?  @updatedAt
+
+  device     Device     @relation(fields: [deviceId], references: [id])
+  category   Category   @relation(fields: [categoryId], references: [id])
+  posEvents  PosEvent[]
+}
+
+model PosEvent {
+  id          String     @id
+  deviceId    String
+  productId   String
+  weightGrams Float?
+  quantity    Int?
+  priceApplied Float
+  eventTime   DateTime
+  synced      Boolean    @default(false)
+
+  device    Device    @relation(fields: [deviceId], references: [id])
+  product   Product   @relation(fields: [productId], references: [id])
+}
