@@ -16,13 +16,19 @@ export async function syncProducts() {
   try {
     const deviceId = DEVICE_CONFIG.deviceId;
 
-    // Fetch cloud products
+    // Fetch only unsynced cloud products for this device
     const res = await fetch(AMPLIFY_API_URL, {
       method: "POST",
       headers: API_HEADERS,
       body: JSON.stringify({
         query: listProducts,
-        variables: { filter: { deviceId: { eq: deviceId } }, limit: 1000 },
+        variables: {
+          filter: {
+            deviceId: { eq: deviceId },
+            synced: { eq: false },
+          },
+          limit: 1000,
+        },
       }),
     });
 
@@ -47,13 +53,13 @@ export async function syncProducts() {
             ...cleanProd,
             button: cleanProd.button || "BTN1",
             synced: true,
-          }, // mark synced locally
+          },
         });
         createdCount++;
         continue;
       }
 
-      // Cloud product has changes (synced=false) or local outdated
+      // Cloud product has changes (unsynced) or local outdated
       if (!cleanProd.synced) {
         await prisma.product.update({
           where: { id: cleanProd.id },
@@ -61,7 +67,7 @@ export async function syncProducts() {
             ...cleanProd,
             button: cleanProd.button || "BTN1",
             synced: true,
-          }, // update local and mark synced
+          },
         });
 
         // Update cloud to mark synced=true
@@ -78,7 +84,6 @@ export async function syncProducts() {
         continue;
       }
 
-      // Product already synced, no changes
       alreadySyncedCount++;
     }
 

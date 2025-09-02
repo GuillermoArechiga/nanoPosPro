@@ -15,14 +15,17 @@ export async function syncCategories() {
       return;
     }
 
-    // Fetch cloud categories
+    // Fetch only unsynced cloud categories for this device
     const res = await fetch(AMPLIFY_API_URL, {
       method: "POST",
       headers: API_HEADERS,
       body: JSON.stringify({
         query: listCategories,
         variables: {
-          filter: { deviceId: { eq: deviceId } },
+          filter: {
+            deviceId: { eq: deviceId },
+            synced: { eq: false }, // Only unsynced
+          },
           limit: 1000,
         },
       }),
@@ -51,7 +54,7 @@ export async function syncCategories() {
         continue;
       }
 
-      // Cloud category updated or unsynced → update local and mark cloud synced
+      // Cloud category updated → update local and mark cloud synced
       if (!cleanCat.synced) {
         await prisma.category.update({
           where: { id: cleanCat.id },
@@ -72,7 +75,6 @@ export async function syncCategories() {
         continue;
       }
 
-      // Already synced
       alreadySyncedCount++;
     }
 
