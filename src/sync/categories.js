@@ -52,10 +52,7 @@ export async function syncCategories() {
       }
 
       // Cloud category updated or unsynced → update local and mark cloud synced
-      if (
-        !cleanCat.synced ||
-        new Date(cleanCat.updatedAt) > (existing.updatedAt || new Date(0))
-      ) {
+      if (!cleanCat.synced) {
         await prisma.category.update({
           where: { id: cleanCat.id },
           data: { ...cleanCat, synced: true },
