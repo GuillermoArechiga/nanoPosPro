@@ -12,3 +12,6 @@ prisma/migrations/
 
 # Optional: VSCode settings
 .vscode/
+
+# Device config
+/src/utils/deviceConfig.json
