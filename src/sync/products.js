@@ -48,13 +48,24 @@ export async function syncProducts() {
 
       // Cloud product is new (not in local)
       if (!existing) {
-        await prisma.product.create({
+        const created = await prisma.product.create({
           data: {
             ...cleanProd,
             button: cleanProd.button || "BTN1",
-            synced: true,
+            synced: true, // local synced
           },
         });
+
+        // Immediately mark cloud product as synced
+        await fetch(AMPLIFY_API_URL, {
+          method: "POST",
+          headers: API_HEADERS,
+          body: JSON.stringify({
+            query: updateProduct,
+            variables: { input: { id: created.id, synced: true } },
+          }),
+        });
+
         createdCount++;
         continue;
       }

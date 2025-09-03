@@ -24,7 +24,7 @@ export async function syncCategories() {
         variables: {
           filter: {
             deviceId: { eq: deviceId },
-            synced: { eq: false }, // Only unsynced
+            synced: { eq: false },
           },
           limit: 1000,
         },
@@ -47,9 +47,20 @@ export async function syncCategories() {
 
       // New cloud category → create locally and mark synced
       if (!existing) {
-        await prisma.category.create({
-          data: { ...cleanCat, synced: true },
+        const created = await prisma.category.create({
+          data: { ...cleanCat, synced: true }, // local synced
         });
+
+        // Immediately update cloud category to mark synced=true
+        await fetch(AMPLIFY_API_URL, {
+          method: "POST",
+          headers: API_HEADERS,
+          body: JSON.stringify({
+            query: updateCategory,
+            variables: { input: { id: created.id, synced: true } },
+          }),
+        });
+
         createdCount++;
         continue;
       }
