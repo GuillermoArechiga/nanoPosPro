@@ -5,16 +5,14 @@ import { AMPLIFY_API_URL, API_HEADERS } from "./config.js";
 import { listProducts } from "../graphql/queries.js";
 import { updateProduct } from "../graphql/mutations.js";
 
-const DEVICE_CONFIG = loadDeviceConfig();
-
-if (!DEVICE_CONFIG?.deviceId) {
-  console.error("Device not configured! Run createDevice.js first.");
-  process.exit(1);
-}
-
 export async function syncProducts() {
   try {
-    const deviceId = DEVICE_CONFIG.deviceId;
+    const deviceConfig = await loadDeviceConfig();
+    const ownerId = deviceConfig?.owner;
+    if (!ownerId) {
+      console.error("Device ownerId is not defined in device config.");
+      return;
+    }
 
     // Fetch only unsynced cloud products for this device
     const res = await fetch(AMPLIFY_API_URL, {
@@ -24,7 +22,7 @@ export async function syncProducts() {
         query: listProducts,
         variables: {
           filter: {
-            deviceId: { eq: deviceId },
+            owner: { eq: ownerId },
             synced: { eq: false },
           },
           limit: 1000,
@@ -52,7 +50,7 @@ export async function syncProducts() {
           data: {
             ...cleanProd,
             button: cleanProd.button || "BTN1",
-            synced: true, // local synced
+            synced: true,
           },
         });
 

@@ -4,18 +4,17 @@ import { loadDeviceConfig } from "../utils/deviceConfig.js";
 import { AMPLIFY_API_URL, API_HEADERS } from "./config.js";
 import { createPosEvent } from "../graphql/mutations.js";
 
-const DEVICE_CONFIG = loadDeviceConfig();
-
-if (!DEVICE_CONFIG?.deviceId) {
-  console.error("Device config missing! Run createDevice.js first.");
-  process.exit(1);
-}
 
 export async function syncPosEvents() {
   try {
+    const DEVICE_CONFIG = await loadDeviceConfig();
+    if (!DEVICE_CONFIG?.id) {
+      console.error("Device config missing! Run createDevice.js first.");
+      process.exit(1);
+    }
     // Only unsynced local events
     const unsyncedEvents = await prisma.posEvent.findMany({
-      where: { synced: false, deviceId: DEVICE_CONFIG.deviceId },
+      where: { synced: false, deviceId: DEVICE_CONFIG.id },
     });
 
     let syncedCount = 0;

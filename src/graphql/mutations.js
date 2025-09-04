@@ -12,15 +12,8 @@ export const createDevice = /* GraphQL */ `
       location
       firmwareVersion
       isOnline
+      owner
       synced
-      categories {
-        nextToken
-        __typename
-      }
-      products {
-        nextToken
-        __typename
-      }
       events {
         nextToken
         __typename
@@ -42,15 +35,8 @@ export const updateDevice = /* GraphQL */ `
       location
       firmwareVersion
       isOnline
+      owner
       synced
-      categories {
-        nextToken
-        __typename
-      }
-      products {
-        nextToken
-        __typename
-      }
       events {
         nextToken
         __typename
@@ -72,15 +58,8 @@ export const deleteDevice = /* GraphQL */ `
       location
       firmwareVersion
       isOnline
+      owner
       synced
-      categories {
-        nextToken
-        __typename
-      }
-      products {
-        nextToken
-        __typename
-      }
       events {
         nextToken
         __typename
@@ -98,22 +77,11 @@ export const createCategory = /* GraphQL */ `
   ) {
     createCategory(input: $input, condition: $condition) {
       id
-      deviceId
       name
       description
-      isDeleted
       synced
-      device {
-        id
-        label
-        location
-        firmwareVersion
-        isOnline
-        synced
-        createdAt
-        updatedAt
-        __typename
-      }
+      isDeleted
+      owner
       products {
         nextToken
         __typename
@@ -131,22 +99,11 @@ export const updateCategory = /* GraphQL */ `
   ) {
     updateCategory(input: $input, condition: $condition) {
       id
-      deviceId
       name
       description
-      isDeleted
       synced
-      device {
-        id
-        label
-        location
-        firmwareVersion
-        isOnline
-        synced
-        createdAt
-        updatedAt
-        __typename
-      }
+      isDeleted
+      owner
       products {
         nextToken
         __typename
@@ -164,22 +121,11 @@ export const deleteCategory = /* GraphQL */ `
   ) {
     deleteCategory(input: $input, condition: $condition) {
       id
-      deviceId
       name
       description
-      isDeleted
       synced
-      device {
-        id
-        label
-        location
-        firmwareVersion
-        isOnline
-        synced
-        createdAt
-        updatedAt
-        __typename
-      }
+      isDeleted
+      owner
       products {
         nextToken
         __typename
@@ -197,7 +143,6 @@ export const createProduct = /* GraphQL */ `
   ) {
     createProduct(input: $input, condition: $condition) {
       id
-      deviceId
       name
       price1
       price2
@@ -205,28 +150,18 @@ export const createProduct = /* GraphQL */ `
       metric
       sku
       isActive
-      isDeleted
       button
       synced
-      device {
-        id
-        label
-        location
-        firmwareVersion
-        isOnline
-        synced
-        createdAt
-        updatedAt
-        __typename
-      }
+      isDeleted
+      owner
       categoryId
       category {
         id
-        deviceId
         name
         description
-        isDeleted
         synced
+        isDeleted
+        owner
         createdAt
         updatedAt
         __typename
@@ -248,7 +183,6 @@ export const updateProduct = /* GraphQL */ `
   ) {
     updateProduct(input: $input, condition: $condition) {
       id
-      deviceId
       name
       price1
       price2
@@ -256,28 +190,18 @@ export const updateProduct = /* GraphQL */ `
       metric
       sku
       isActive
-      isDeleted
       button
       synced
-      device {
-        id
-        label
-        location
-        firmwareVersion
-        isOnline
-        synced
-        createdAt
-        updatedAt
-        __typename
-      }
+      isDeleted
+      owner
       categoryId
       category {
         id
-        deviceId
         name
         description
-        isDeleted
         synced
+        isDeleted
+        owner
         createdAt
         updatedAt
         __typename
@@ -299,7 +223,6 @@ export const deleteProduct = /* GraphQL */ `
   ) {
     deleteProduct(input: $input, condition: $condition) {
       id
-      deviceId
       name
       price1
       price2
@@ -307,28 +230,18 @@ export const deleteProduct = /* GraphQL */ `
       metric
       sku
       isActive
-      isDeleted
       button
       synced
-      device {
-        id
-        label
-        location
-        firmwareVersion
-        isOnline
-        synced
-        createdAt
-        updatedAt
-        __typename
-      }
+      isDeleted
+      owner
       categoryId
       category {
         id
-        deviceId
         name
         description
-        isDeleted
         synced
+        isDeleted
+        owner
         createdAt
         updatedAt
         __typename
@@ -363,6 +276,7 @@ export const createPosEvent = /* GraphQL */ `
         location
         firmwareVersion
         isOnline
+        owner
         synced
         createdAt
         updatedAt
@@ -370,7 +284,6 @@ export const createPosEvent = /* GraphQL */ `
       }
       product {
         id
-        deviceId
         name
         price1
         price2
@@ -378,9 +291,10 @@ export const createPosEvent = /* GraphQL */ `
         metric
         sku
         isActive
-        isDeleted
         button
         synced
+        isDeleted
+        owner
         categoryId
         createdAt
         updatedAt
@@ -388,6 +302,7 @@ export const createPosEvent = /* GraphQL */ `
       }
       createdAt
       updatedAt
+      owner
       __typename
     }
   }
@@ -412,6 +327,7 @@ export const updatePosEvent = /* GraphQL */ `
         location
         firmwareVersion
         isOnline
+        owner
         synced
         createdAt
         updatedAt
@@ -419,7 +335,6 @@ export const updatePosEvent = /* GraphQL */ `
       }
       product {
         id
-        deviceId
         name
         price1
         price2
@@ -427,9 +342,10 @@ export const updatePosEvent = /* GraphQL */ `
         metric
         sku
         isActive
-        isDeleted
         button
         synced
+        isDeleted
+        owner
         categoryId
         createdAt
         updatedAt
@@ -437,6 +353,7 @@ export const updatePosEvent = /* GraphQL */ `
       }
       createdAt
       updatedAt
+      owner
       __typename
     }
   }
@@ -461,6 +378,7 @@ export const deletePosEvent = /* GraphQL */ `
         location
         firmwareVersion
         isOnline
+        owner
         synced
         createdAt
         updatedAt
@@ -468,7 +386,6 @@ export const deletePosEvent = /* GraphQL */ `
       }
       product {
         id
-        deviceId
         name
         price1
         price2
@@ -476,9 +393,10 @@ export const deletePosEvent = /* GraphQL */ `
         metric
         sku
         isActive
-        isDeleted
         button
         synced
+        isDeleted
+        owner
         categoryId
         createdAt
         updatedAt
@@ -486,6 +404,7 @@ export const deletePosEvent = /* GraphQL */ `
       }
       createdAt
       updatedAt
+      owner
       __typename
     }
   }

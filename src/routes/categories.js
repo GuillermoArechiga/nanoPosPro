@@ -1,26 +1,23 @@
 import express from "express";
 import prisma from "../db/client.js";
-import { loadDeviceConfig } from "../utils/deviceConfig.js";
-
-const DEVICE_CONFIG = loadDeviceConfig();
 
 const router = express.Router();
-
-// Ensure device is configured
-if (!DEVICE_CONFIG || !DEVICE_CONFIG.deviceId) {
-  console.error("Device not configured! Run createDevice.js first.");
-  process.exit(1);
-}
 
 // GET local categories for current device (not deleted)
 router.get("/", async (req, res) => {
   try {
+    const deviceConfig = req.deviceConfig;
+    if (!deviceConfig || !deviceConfig.id) {
+      console.error("Device not configured! Run createDevice.js first.");
+      return res.status(500).json({ error: "Device not configured" });
+    }
+
     const categories = await prisma.category.findMany({
       where: {
-        deviceId: DEVICE_CONFIG.deviceId,
+        owner: deviceConfig.owner,
         isDeleted: false,
       },
-      orderBy: { name: "asc" }, // optional, order by name
+      orderBy: { name: "asc" },
     });
 
     res.json(categories);

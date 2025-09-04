@@ -9,15 +9,8 @@ export const getDevice = /* GraphQL */ `
       location
       firmwareVersion
       isOnline
+      owner
       synced
-      categories {
-        nextToken
-        __typename
-      }
-      products {
-        nextToken
-        __typename
-      }
       events {
         nextToken
         __typename
@@ -41,6 +34,7 @@ export const listDevices = /* GraphQL */ `
         location
         firmwareVersion
         isOnline
+        owner
         synced
         createdAt
         updatedAt
@@ -55,22 +49,11 @@ export const getCategory = /* GraphQL */ `
   query GetCategory($id: ID!) {
     getCategory(id: $id) {
       id
-      deviceId
       name
       description
-      isDeleted
       synced
-      device {
-        id
-        label
-        location
-        firmwareVersion
-        isOnline
-        synced
-        createdAt
-        updatedAt
-        __typename
-      }
+      isDeleted
+      owner
       products {
         nextToken
         __typename
@@ -90,11 +73,11 @@ export const listCategories = /* GraphQL */ `
     listCategories(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
-        deviceId
         name
         description
-        isDeleted
         synced
+        isDeleted
+        owner
         createdAt
         updatedAt
         __typename
@@ -108,7 +91,6 @@ export const getProduct = /* GraphQL */ `
   query GetProduct($id: ID!) {
     getProduct(id: $id) {
       id
-      deviceId
       name
       price1
       price2
@@ -116,28 +98,18 @@ export const getProduct = /* GraphQL */ `
       metric
       sku
       isActive
-      isDeleted
       button
       synced
-      device {
-        id
-        label
-        location
-        firmwareVersion
-        isOnline
-        synced
-        createdAt
-        updatedAt
-        __typename
-      }
+      isDeleted
+      owner
       categoryId
       category {
         id
-        deviceId
         name
         description
-        isDeleted
         synced
+        isDeleted
+        owner
         createdAt
         updatedAt
         __typename
@@ -161,7 +133,6 @@ export const listProducts = /* GraphQL */ `
     listProducts(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
-        deviceId
         name
         price1
         price2
@@ -169,9 +140,10 @@ export const listProducts = /* GraphQL */ `
         metric
         sku
         isActive
-        isDeleted
         button
         synced
+        isDeleted
+        owner
         categoryId
         createdAt
         updatedAt
@@ -199,6 +171,7 @@ export const getPosEvent = /* GraphQL */ `
         location
         firmwareVersion
         isOnline
+        owner
         synced
         createdAt
         updatedAt
@@ -206,7 +179,6 @@ export const getPosEvent = /* GraphQL */ `
       }
       product {
         id
-        deviceId
         name
         price1
         price2
@@ -214,9 +186,10 @@ export const getPosEvent = /* GraphQL */ `
         metric
         sku
         isActive
-        isDeleted
         button
         synced
+        isDeleted
+        owner
         categoryId
         createdAt
         updatedAt
@@ -224,6 +197,7 @@ export const getPosEvent = /* GraphQL */ `
       }
       createdAt
       updatedAt
+      owner
       __typename
     }
   }
@@ -246,6 +220,7 @@ export const listPosEvents = /* GraphQL */ `
         synced
         createdAt
         updatedAt
+        owner
         __typename
       }
       nextToken

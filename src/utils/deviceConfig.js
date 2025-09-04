@@ -1,21 +1,15 @@
-import fs from "fs";
-import path from "path";
+import prisma from "../db/client.js";
 
-const CONFIG_FILE = path.resolve("src/utils/deviceConfig.json");
+export async function loadDeviceConfig() {
+  // Fetch the single device from the local database
+  const device = await prisma.device.findFirst();
 
-export function loadDeviceConfig() {
-  if (!fs.existsSync(CONFIG_FILE)) {
-    console.error("Device config not found! Run createDevice.js first.");
+  if (!device) {
+    console.error(
+      "No device found in local database! Run createDevice.js first."
+    );
     process.exit(1);
   }
 
-  const raw = fs.readFileSync(CONFIG_FILE, "utf-8");
-  const config = JSON.parse(raw);
-
-  if (!config.deviceId) {
-    console.error("Device config invalid! Missing deviceId.");
-    process.exit(1);
-  }
-
-  return config;
+  return device; 
 }

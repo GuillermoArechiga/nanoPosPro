@@ -34,46 +34,43 @@ model Device {
   firmware     String?
   isOnline     Boolean?   
   synced       Boolean    @default(false)
+  owner        String?
   createdAt    DateTime?  @default(now())
   updatedAt    DateTime?  @updatedAt
 
-  categories   Category[]
-  products     Product[]
   posEvents    PosEvent[]
 }
 
 model Category {
   id          String     @id
-  deviceId    String
   name        String
   description String?
   isDeleted   Boolean    @default(false)
   synced      Boolean    @default(false)
+  owner       String
   createdAt   DateTime?  @default(now())
   updatedAt   DateTime?  @updatedAt
 
-  device     Device     @relation(fields: [deviceId], references: [id])
   products   Product[]
 }
 
 model Product {
   id          String     @id
-  deviceId    String
   name        String
   price1      Float
   price2      Float?
   price3      Float?
   metric      MetricUnit
   sku         String?
-  isActive    Boolean    @default(true)
-  isDeleted   Boolean    @default(false)
+  isActive    Boolean    @default(true)  
   button      ButtonName
   synced      Boolean    @default(false)
+  isDeleted   Boolean    @default(false)
+  owner       String
   categoryId  String
   createdAt   DateTime?  @default(now())
   updatedAt   DateTime?  @updatedAt
 
-  device     Device     @relation(fields: [deviceId], references: [id])
   category   Category   @relation(fields: [categoryId], references: [id])
   posEvents  PosEvent[]
 }

@@ -5,13 +5,12 @@ import { AMPLIFY_API_URL, API_HEADERS } from "./config.js";
 import { listCategories } from "../graphql/queries.js";
 import { updateCategory } from "../graphql/mutations.js";
 
-const DEVICE_CONFIG = loadDeviceConfig();
-
 export async function syncCategories() {
   try {
-    const deviceId = DEVICE_CONFIG?.deviceId;
-    if (!deviceId) {
-      console.error("Device ID is not defined in device config.");
+    const DEVICE_CONFIG = await loadDeviceConfig();
+    const ownerId = DEVICE_CONFIG?.owner;
+    if (!ownerId) {
+      console.error("Device ownerId is not defined in device config.");
       return;
     }
 
@@ -23,7 +22,7 @@ export async function syncCategories() {
         query: listCategories,
         variables: {
           filter: {
-            deviceId: { eq: deviceId },
+            owner: { eq: ownerId },
             synced: { eq: false },
           },
           limit: 1000,

@@ -1,16 +1,14 @@
-import fs from "fs";
-import path from "path";
 import crypto from "crypto";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
-const CONFIG_FILE = path.resolve("./src/utils/deviceConfig.json");
 
 async function main() {
-  // Check if device config already exists
-  if (fs.existsSync(CONFIG_FILE)) {
-    const existingConfig = JSON.parse(fs.readFileSync(CONFIG_FILE, "utf-8"));
-    console.log("Device already exists:", existingConfig);
+  // Check if a device already exists in the local DB
+  const existingDevice = await prisma.device.findFirst();
+
+  if (existingDevice) {
+    console.log("Device already exists:", existingDevice);
     process.exit(0);
   }
 
@@ -29,13 +27,7 @@ async function main() {
     },
   });
 
-  // Save device ID to local config
-  const config = {
-    deviceId: device.id,
-  };
-
-  fs.writeFileSync(CONFIG_FILE, JSON.stringify(config, null, 2));
-  console.log("Device created successfully:", config);
+  console.log("Device created successfully:", device);
 }
 
 main()
