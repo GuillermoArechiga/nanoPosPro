@@ -31,22 +31,23 @@ model Device {
   id           String     @id
   label        String?
   location     String?
-  firmware     String?
+  firmwareVersion     String?
   isOnline     Boolean?   
   synced       Boolean    @default(false)
   owner        String?
   createdAt    DateTime?  @default(now())
   updatedAt    DateTime?  @updatedAt
 
-  posEvents    PosEvent[]
+  events        PosEvent[]
+  buttonConfigs ButtonConfig[]   // ← relation to ButtonConfig
 }
 
 model Category {
   id          String     @id
   name        String
   description String?
-  isDeleted   Boolean    @default(false)
   synced      Boolean    @default(false)
+  isDeleted   Boolean    @default(false)
   owner       String
   createdAt   DateTime?  @default(now())
   updatedAt   DateTime?  @updatedAt
@@ -62,8 +63,7 @@ model Product {
   price3      Float?
   metric      MetricUnit
   sku         String?
-  isActive    Boolean    @default(true)  
-  button      ButtonName
+  isActive    Boolean    @default(true)
   synced      Boolean    @default(false)
   isDeleted   Boolean    @default(false)
   owner       String
@@ -72,19 +72,52 @@ model Product {
   updatedAt   DateTime?  @updatedAt
 
   category   Category   @relation(fields: [categoryId], references: [id])
-  posEvents  PosEvent[]
+  buttonConfigs ButtonConfig[]
+  eventProducts   PosEventProduct[]  
+}
+
+model ButtonConfig {
+  id          String      @id @default(cuid())
+  deviceId    String
+  button      ButtonName
+  productId   String
+  priceTier   Int
+  synced      Boolean      @default(false)
+  owner       String
+  createdAt   DateTime?  @default(now())
+  updatedAt   DateTime?  @updatedAt
+
+  device      Device       @relation(fields: [deviceId], references: [id])
+  product     Product      @relation(fields: [productId], references: [id])
+
+  @@unique([deviceId, button])
 }
 
 model PosEvent {
   id          String     @id
   deviceId    String
-  productId   String
-  weightGrams Float?
-  quantity    Int?
-  priceApplied Float
-  eventTime   DateTime
+  cancelled   Boolean    @default(false)
   synced      Boolean    @default(false)
+  owner       String
+  createdAt   DateTime?  @default(now())
+  updatedAt   DateTime?  @updatedAt
 
-  device    Device    @relation(fields: [deviceId], references: [id])
-  product   Product   @relation(fields: [productId], references: [id])
+  device      Device    @relation(fields: [deviceId], references: [id])
+  products    PosEventProduct[]
+}
+
+model PosEventProduct {
+  id           String    @id @default(cuid())
+  posEventId   String
+  productId    String
+  weightGrams  Float?
+  quantity     Int?
+  priceApplied Float
+  synced       Boolean   @default(false)
+  owner       String
+  createdAt   DateTime?  @default(now())
+  updatedAt   DateTime?  @updatedAt
+
+  event   PosEvent  @relation(fields: [posEventId], references: [id])
+  product    Product   @relation(fields: [productId], references: [id])
 }

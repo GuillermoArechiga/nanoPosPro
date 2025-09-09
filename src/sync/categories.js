@@ -8,8 +8,8 @@ import { updateCategory } from "../graphql/mutations.js";
 export async function syncCategories() {
   try {
     const DEVICE_CONFIG = await loadDeviceConfig();
-    const ownerId = DEVICE_CONFIG?.owner;
-    if (!ownerId) {
+    const owner = DEVICE_CONFIG?.owner?.trim();
+    if (!owner) {
       console.error("Device ownerId is not defined in device config.");
       return;
     }
@@ -22,7 +22,7 @@ export async function syncCategories() {
         query: listCategories,
         variables: {
           filter: {
-            owner: { eq: ownerId },
+            owner: { eq: owner },
             synced: { eq: false },
           },
           limit: 1000,
@@ -32,6 +32,8 @@ export async function syncCategories() {
 
     const json = await res.json();
     const cloudCategories = json.data?.listCategories?.items || [];
+
+    console.log("CategoriesCloud:", cloudCategories)
 
     let createdCount = 0;
     let updatedCount = 0;

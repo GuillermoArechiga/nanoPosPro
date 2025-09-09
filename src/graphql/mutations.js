@@ -12,9 +12,13 @@ export const createDevice = /* GraphQL */ `
       location
       firmwareVersion
       isOnline
-      owner
       synced
+      owner
       events {
+        nextToken
+        __typename
+      }
+      buttonConfigs {
         nextToken
         __typename
       }
@@ -35,9 +39,13 @@ export const updateDevice = /* GraphQL */ `
       location
       firmwareVersion
       isOnline
-      owner
       synced
+      owner
       events {
+        nextToken
+        __typename
+      }
+      buttonConfigs {
         nextToken
         __typename
       }
@@ -58,9 +66,13 @@ export const deleteDevice = /* GraphQL */ `
       location
       firmwareVersion
       isOnline
-      owner
       synced
+      owner
       events {
+        nextToken
+        __typename
+      }
+      buttonConfigs {
         nextToken
         __typename
       }
@@ -150,7 +162,6 @@ export const createProduct = /* GraphQL */ `
       metric
       sku
       isActive
-      button
       synced
       isDeleted
       owner
@@ -166,7 +177,11 @@ export const createProduct = /* GraphQL */ `
         updatedAt
         __typename
       }
-      events {
+      buttonConfigs {
+        nextToken
+        __typename
+      }
+      eventProducts {
         nextToken
         __typename
       }
@@ -190,7 +205,6 @@ export const updateProduct = /* GraphQL */ `
       metric
       sku
       isActive
-      button
       synced
       isDeleted
       owner
@@ -206,7 +220,11 @@ export const updateProduct = /* GraphQL */ `
         updatedAt
         __typename
       }
-      events {
+      buttonConfigs {
+        nextToken
+        __typename
+      }
+      eventProducts {
         nextToken
         __typename
       }
@@ -230,7 +248,6 @@ export const deleteProduct = /* GraphQL */ `
       metric
       sku
       isActive
-      button
       synced
       isDeleted
       owner
@@ -246,8 +263,156 @@ export const deleteProduct = /* GraphQL */ `
         updatedAt
         __typename
       }
-      events {
+      buttonConfigs {
         nextToken
+        __typename
+      }
+      eventProducts {
+        nextToken
+        __typename
+      }
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const createButtonConfig = /* GraphQL */ `
+  mutation CreateButtonConfig(
+    $input: CreateButtonConfigInput!
+    $condition: ModelButtonConfigConditionInput
+  ) {
+    createButtonConfig(input: $input, condition: $condition) {
+      id
+      deviceId
+      button
+      productId
+      priceTier
+      synced
+      owner
+      device {
+        id
+        label
+        location
+        firmwareVersion
+        isOnline
+        synced
+        owner
+        createdAt
+        updatedAt
+        __typename
+      }
+      product {
+        id
+        name
+        price1
+        price2
+        price3
+        metric
+        sku
+        isActive
+        synced
+        isDeleted
+        owner
+        categoryId
+        createdAt
+        updatedAt
+        __typename
+      }
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const updateButtonConfig = /* GraphQL */ `
+  mutation UpdateButtonConfig(
+    $input: UpdateButtonConfigInput!
+    $condition: ModelButtonConfigConditionInput
+  ) {
+    updateButtonConfig(input: $input, condition: $condition) {
+      id
+      deviceId
+      button
+      productId
+      priceTier
+      synced
+      owner
+      device {
+        id
+        label
+        location
+        firmwareVersion
+        isOnline
+        synced
+        owner
+        createdAt
+        updatedAt
+        __typename
+      }
+      product {
+        id
+        name
+        price1
+        price2
+        price3
+        metric
+        sku
+        isActive
+        synced
+        isDeleted
+        owner
+        categoryId
+        createdAt
+        updatedAt
+        __typename
+      }
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const deleteButtonConfig = /* GraphQL */ `
+  mutation DeleteButtonConfig(
+    $input: DeleteButtonConfigInput!
+    $condition: ModelButtonConfigConditionInput
+  ) {
+    deleteButtonConfig(input: $input, condition: $condition) {
+      id
+      deviceId
+      button
+      productId
+      priceTier
+      synced
+      owner
+      device {
+        id
+        label
+        location
+        firmwareVersion
+        isOnline
+        synced
+        owner
+        createdAt
+        updatedAt
+        __typename
+      }
+      product {
+        id
+        name
+        price1
+        price2
+        price3
+        metric
+        sku
+        isActive
+        synced
+        isDeleted
+        owner
+        categoryId
+        createdAt
+        updatedAt
         __typename
       }
       createdAt
@@ -264,45 +429,27 @@ export const createPosEvent = /* GraphQL */ `
     createPosEvent(input: $input, condition: $condition) {
       id
       deviceId
-      productId
-      weightGrams
-      quantity
-      priceApplied
-      eventTime
+      cancelled
       synced
+      owner
       device {
         id
         label
         location
         firmwareVersion
         isOnline
-        owner
         synced
+        owner
         createdAt
         updatedAt
         __typename
       }
-      product {
-        id
-        name
-        price1
-        price2
-        price3
-        metric
-        sku
-        isActive
-        button
-        synced
-        isDeleted
-        owner
-        categoryId
-        createdAt
-        updatedAt
+      products {
+        nextToken
         __typename
       }
       createdAt
       updatedAt
-      owner
       __typename
     }
   }
@@ -315,45 +462,27 @@ export const updatePosEvent = /* GraphQL */ `
     updatePosEvent(input: $input, condition: $condition) {
       id
       deviceId
-      productId
-      weightGrams
-      quantity
-      priceApplied
-      eventTime
+      cancelled
       synced
+      owner
       device {
         id
         label
         location
         firmwareVersion
         isOnline
-        owner
         synced
+        owner
         createdAt
         updatedAt
         __typename
       }
-      product {
-        id
-        name
-        price1
-        price2
-        price3
-        metric
-        sku
-        isActive
-        button
-        synced
-        isDeleted
-        owner
-        categoryId
-        createdAt
-        updatedAt
+      products {
+        nextToken
         __typename
       }
       createdAt
       updatedAt
-      owner
       __typename
     }
   }
@@ -366,20 +495,50 @@ export const deletePosEvent = /* GraphQL */ `
     deletePosEvent(input: $input, condition: $condition) {
       id
       deviceId
-      productId
-      weightGrams
-      quantity
-      priceApplied
-      eventTime
+      cancelled
       synced
+      owner
       device {
         id
         label
         location
         firmwareVersion
         isOnline
-        owner
         synced
+        owner
+        createdAt
+        updatedAt
+        __typename
+      }
+      products {
+        nextToken
+        __typename
+      }
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const createPosEventProduct = /* GraphQL */ `
+  mutation CreatePosEventProduct(
+    $input: CreatePosEventProductInput!
+    $condition: ModelPosEventProductConditionInput
+  ) {
+    createPosEventProduct(input: $input, condition: $condition) {
+      id
+      posEventId
+      productId
+      weightGrams
+      quantity
+      priceApplied
+      owner
+      event {
+        id
+        deviceId
+        cancelled
+        synced
+        owner
         createdAt
         updatedAt
         __typename
@@ -393,7 +552,6 @@ export const deletePosEvent = /* GraphQL */ `
         metric
         sku
         isActive
-        button
         synced
         isDeleted
         owner
@@ -404,7 +562,98 @@ export const deletePosEvent = /* GraphQL */ `
       }
       createdAt
       updatedAt
+      __typename
+    }
+  }
+`;
+export const updatePosEventProduct = /* GraphQL */ `
+  mutation UpdatePosEventProduct(
+    $input: UpdatePosEventProductInput!
+    $condition: ModelPosEventProductConditionInput
+  ) {
+    updatePosEventProduct(input: $input, condition: $condition) {
+      id
+      posEventId
+      productId
+      weightGrams
+      quantity
+      priceApplied
       owner
+      event {
+        id
+        deviceId
+        cancelled
+        synced
+        owner
+        createdAt
+        updatedAt
+        __typename
+      }
+      product {
+        id
+        name
+        price1
+        price2
+        price3
+        metric
+        sku
+        isActive
+        synced
+        isDeleted
+        owner
+        categoryId
+        createdAt
+        updatedAt
+        __typename
+      }
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const deletePosEventProduct = /* GraphQL */ `
+  mutation DeletePosEventProduct(
+    $input: DeletePosEventProductInput!
+    $condition: ModelPosEventProductConditionInput
+  ) {
+    deletePosEventProduct(input: $input, condition: $condition) {
+      id
+      posEventId
+      productId
+      weightGrams
+      quantity
+      priceApplied
+      owner
+      event {
+        id
+        deviceId
+        cancelled
+        synced
+        owner
+        createdAt
+        updatedAt
+        __typename
+      }
+      product {
+        id
+        name
+        price1
+        price2
+        price3
+        metric
+        sku
+        isActive
+        synced
+        isDeleted
+        owner
+        categoryId
+        createdAt
+        updatedAt
+        __typename
+      }
+      createdAt
+      updatedAt
       __typename
     }
   }

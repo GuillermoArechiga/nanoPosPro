@@ -42,9 +42,10 @@ export async function syncDeviceInfo() {
               id: localDevice.id,
               label: localDevice.label,
               location: localDevice.location,
-              firmwareVersion: localDevice.firmware,
+              firmwareVersion: localDevice.firmwareVersion,
               isOnline: localDevice.isOnline,
               synced: true,
+              owner: localDevice.owner,
             },
           },
         }),
@@ -80,9 +81,9 @@ export async function syncDeviceInfo() {
         data: {
           label: cloudDevice.label,
           location: cloudDevice.location,
-          firmware: cloudDevice.firmwareVersion,
+          firmwareVersion: cloudDevice.firmwareVersion,
           isOnline: cloudDevice.isOnline,
-          owner: cloudDevice.owner,
+          owner: cloudDevice.owner || "toAssign",
           synced: true,
         },
       });

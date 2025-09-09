@@ -9,9 +9,13 @@ export const getDevice = /* GraphQL */ `
       location
       firmwareVersion
       isOnline
-      owner
       synced
+      owner
       events {
+        nextToken
+        __typename
+      }
+      buttonConfigs {
         nextToken
         __typename
       }
@@ -34,8 +38,8 @@ export const listDevices = /* GraphQL */ `
         location
         firmwareVersion
         isOnline
-        owner
         synced
+        owner
         createdAt
         updatedAt
         __typename
@@ -98,7 +102,6 @@ export const getProduct = /* GraphQL */ `
       metric
       sku
       isActive
-      button
       synced
       isDeleted
       owner
@@ -114,7 +117,11 @@ export const getProduct = /* GraphQL */ `
         updatedAt
         __typename
       }
-      events {
+      buttonConfigs {
+        nextToken
+        __typename
+      }
+      eventProducts {
         nextToken
         __typename
       }
@@ -140,11 +147,79 @@ export const listProducts = /* GraphQL */ `
         metric
         sku
         isActive
-        button
         synced
         isDeleted
         owner
         categoryId
+        createdAt
+        updatedAt
+        __typename
+      }
+      nextToken
+      __typename
+    }
+  }
+`;
+export const getButtonConfig = /* GraphQL */ `
+  query GetButtonConfig($id: ID!) {
+    getButtonConfig(id: $id) {
+      id
+      deviceId
+      button
+      productId
+      priceTier
+      synced
+      owner
+      device {
+        id
+        label
+        location
+        firmwareVersion
+        isOnline
+        synced
+        owner
+        createdAt
+        updatedAt
+        __typename
+      }
+      product {
+        id
+        name
+        price1
+        price2
+        price3
+        metric
+        sku
+        isActive
+        synced
+        isDeleted
+        owner
+        categoryId
+        createdAt
+        updatedAt
+        __typename
+      }
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const listButtonConfigs = /* GraphQL */ `
+  query ListButtonConfigs(
+    $filter: ModelButtonConfigFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listButtonConfigs(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        deviceId
+        button
+        productId
+        priceTier
+        synced
+        owner
         createdAt
         updatedAt
         __typename
@@ -159,45 +234,27 @@ export const getPosEvent = /* GraphQL */ `
     getPosEvent(id: $id) {
       id
       deviceId
-      productId
-      weightGrams
-      quantity
-      priceApplied
-      eventTime
+      cancelled
       synced
+      owner
       device {
         id
         label
         location
         firmwareVersion
         isOnline
-        owner
         synced
+        owner
         createdAt
         updatedAt
         __typename
       }
-      product {
-        id
-        name
-        price1
-        price2
-        price3
-        metric
-        sku
-        isActive
-        button
-        synced
-        isDeleted
-        owner
-        categoryId
-        createdAt
-        updatedAt
+      products {
+        nextToken
         __typename
       }
       createdAt
       updatedAt
-      owner
       __typename
     }
   }
@@ -212,15 +269,11 @@ export const listPosEvents = /* GraphQL */ `
       items {
         id
         deviceId
-        productId
-        weightGrams
-        quantity
-        priceApplied
-        eventTime
+        cancelled
         synced
+        owner
         createdAt
         updatedAt
-        owner
         __typename
       }
       nextToken

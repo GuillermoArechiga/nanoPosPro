@@ -4,9 +4,11 @@ import prisma from "../db/client.js";
 
 const router = express.Router();
 
-// POST new button press
+// POST new sale (event with multiple products)
 router.post("/", async (req, res) => {
-  const { button, weightGrams, quantity, priceApplied } = req.body;
+  const { products } = req.body;
+  // products = [{ button, weightGrams, quantity, priceApplied }, ...]
+
   const DEVICE_CONFIG = req.deviceConfig;
 
   if (!DEVICE_CONFIG || !DEVICE_CONFIG.id) {
@@ -14,39 +16,60 @@ router.post("/", async (req, res) => {
     return res.status(500).json({ error: "Device not configured" });
   }
 
+  if (!Array.isArray(products) || products.length === 0) {
+    return res.status(400).json({ error: "Products array is required" });
+  }
+
   try {
-    // Find product assigned to this button
-    const product = await prisma.product.findFirst({
-      where: { deviceId: DEVICE_CONFIG.id, button },
-    });
-
-    if (!product) {
-      return res.status(404).json({
-        error: `No product assigned to button ${button}`,
-      });
-    }
-
+    // Create one event
     const event = await prisma.posEvent.create({
       data: {
         id: uuidv4(),
         deviceId: DEVICE_CONFIG.id,
-        productId: product.id,
-        weightGrams,
-        quantity,
-        priceApplied,
         eventTime: new Date(),
+        cancelled: false,
         synced: false,
       },
     });
 
-    res.json(event);
+    // Create all eventProducts
+    const eventProducts = [];
+    for (const p of products) {
+      const product = await prisma.product.findFirst({
+        where: { button: p.button },
+      });
+
+      if (!product) {
+        console.warn(`⚠️ No product assigned to button ${p.button}, skipping`);
+        continue;
+      }
+
+      const ep = await prisma.posEventProduct.create({
+        data: {
+          id: uuidv4(),
+          posEventId: event.id,
+          productId: product.id,
+          weightGrams: p.weightGrams ?? null,
+          quantity: p.quantity ?? null,
+          priceApplied: p.priceApplied ?? null,
+          synced: false,
+        },
+      });
+
+      eventProducts.push(ep);
+    }
+
+    res.json({
+      event,
+      products: eventProducts,
+    });
   } catch (err) {
-    console.error(err);
+    console.error("Failed to save event:", err);
     res.status(500).json({ error: "Failed to save event" });
   }
 });
 
-// GET unsynced events
+// GET unsynced events with their products
 router.get("/unsynced", async (req, res) => {
   const DEVICE_CONFIG = req.deviceConfig;
 
@@ -58,10 +81,11 @@ router.get("/unsynced", async (req, res) => {
   try {
     const events = await prisma.posEvent.findMany({
       where: { synced: false, deviceId: DEVICE_CONFIG.id },
+      include: { products: true },
     });
     res.json(events);
   } catch (err) {
-    console.error(err);
+    console.error("Failed to fetch unsynced events:", err);
     res.status(500).json({ error: "Failed to fetch unsynced events" });
   }
 });
