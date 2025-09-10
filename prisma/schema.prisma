@@ -23,7 +23,6 @@ enum ButtonName {
 enum MetricUnit {
   UNIT
   GRAM
-  KILOGRAM
   LITER
 }
 
@@ -61,6 +60,7 @@ model Product {
   price1      Float
   price2      Float?
   price3      Float?
+  cost        Float?
   metric      MetricUnit
   sku         String?
   isActive    Boolean    @default(true)

@@ -99,6 +99,7 @@ export const getProduct = /* GraphQL */ `
       price1
       price2
       price3
+      cost
       metric
       sku
       isActive
@@ -144,6 +145,7 @@ export const listProducts = /* GraphQL */ `
         price1
         price2
         price3
+        cost
         metric
         sku
         isActive
@@ -188,6 +190,7 @@ export const getButtonConfig = /* GraphQL */ `
         price1
         price2
         price3
+        cost
         metric
         sku
         isActive
@@ -270,6 +273,113 @@ export const listPosEvents = /* GraphQL */ `
         id
         deviceId
         cancelled
+        synced
+        owner
+        createdAt
+        updatedAt
+        __typename
+      }
+      nextToken
+      __typename
+    }
+  }
+`;
+export const getPosEventProduct = /* GraphQL */ `
+  query GetPosEventProduct($id: ID!) {
+    getPosEventProduct(id: $id) {
+      id
+      posEventId
+      productId
+      weightGrams
+      quantity
+      priceApplied
+      synced
+      owner
+      event {
+        id
+        deviceId
+        cancelled
+        synced
+        owner
+        createdAt
+        updatedAt
+        __typename
+      }
+      product {
+        id
+        name
+        price1
+        price2
+        price3
+        cost
+        metric
+        sku
+        isActive
+        synced
+        isDeleted
+        owner
+        categoryId
+        createdAt
+        updatedAt
+        __typename
+      }
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const listPosEventProducts = /* GraphQL */ `
+  query ListPosEventProducts(
+    $filter: ModelPosEventProductFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listPosEventProducts(
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        posEventId
+        productId
+        weightGrams
+        quantity
+        priceApplied
+        synced
+        owner
+        createdAt
+        updatedAt
+        __typename
+      }
+      nextToken
+      __typename
+    }
+  }
+`;
+export const posEventProductsByPosEventId = /* GraphQL */ `
+  query PosEventProductsByPosEventId(
+    $posEventId: ID!
+    $sortDirection: ModelSortDirection
+    $filter: ModelPosEventProductFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    posEventProductsByPosEventId(
+      posEventId: $posEventId
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        posEventId
+        productId
+        weightGrams
+        quantity
+        priceApplied
         synced
         owner
         createdAt

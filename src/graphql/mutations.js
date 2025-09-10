@@ -159,6 +159,7 @@ export const createProduct = /* GraphQL */ `
       price1
       price2
       price3
+      cost
       metric
       sku
       isActive
@@ -202,6 +203,7 @@ export const updateProduct = /* GraphQL */ `
       price1
       price2
       price3
+      cost
       metric
       sku
       isActive
@@ -245,6 +247,7 @@ export const deleteProduct = /* GraphQL */ `
       price1
       price2
       price3
+      cost
       metric
       sku
       isActive
@@ -308,6 +311,7 @@ export const createButtonConfig = /* GraphQL */ `
         price1
         price2
         price3
+        cost
         metric
         sku
         isActive
@@ -356,6 +360,7 @@ export const updateButtonConfig = /* GraphQL */ `
         price1
         price2
         price3
+        cost
         metric
         sku
         isActive
@@ -404,6 +409,7 @@ export const deleteButtonConfig = /* GraphQL */ `
         price1
         price2
         price3
+        cost
         metric
         sku
         isActive
@@ -550,6 +556,7 @@ export const createPosEventProduct = /* GraphQL */ `
         price1
         price2
         price3
+        cost
         metric
         sku
         isActive
@@ -597,6 +604,7 @@ export const updatePosEventProduct = /* GraphQL */ `
         price1
         price2
         price3
+        cost
         metric
         sku
         isActive
@@ -644,6 +652,7 @@ export const deletePosEventProduct = /* GraphQL */ `
         price1
         price2
         price3
+        cost
         metric
         sku
         isActive
