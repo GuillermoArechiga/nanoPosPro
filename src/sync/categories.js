@@ -33,8 +33,6 @@ export async function syncCategories() {
     const json = await res.json();
     const cloudCategories = json.data?.listCategories?.items || [];
 
-    console.log("CategoriesCloud:", cloudCategories)
-
     let createdCount = 0;
     let updatedCount = 0;
     let alreadySyncedCount = 0;

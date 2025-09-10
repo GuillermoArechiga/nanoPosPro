@@ -532,6 +532,7 @@ export const createPosEventProduct = /* GraphQL */ `
       weightGrams
       quantity
       priceApplied
+      synced
       owner
       event {
         id
@@ -578,6 +579,7 @@ export const updatePosEventProduct = /* GraphQL */ `
       weightGrams
       quantity
       priceApplied
+      synced
       owner
       event {
         id
@@ -624,6 +626,7 @@ export const deletePosEventProduct = /* GraphQL */ `
       weightGrams
       quantity
       priceApplied
+      synced
       owner
       event {
         id

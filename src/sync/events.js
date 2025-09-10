@@ -2,7 +2,11 @@ import fetch from "node-fetch";
 import prisma from "../db/client.js";
 import { loadDeviceConfig } from "../utils/deviceConfig.js";
 import { AMPLIFY_API_URL, API_HEADERS } from "./config.js";
-import { createPosEvent, createPosEventProduct } from "../graphql/mutations.js";
+import {
+  createPosEvent,
+  createPosEventProduct,
+  updatePosEventProduct,
+} from "../graphql/mutations.js";
 
 export async function syncPosEvents() {
   try {
@@ -22,9 +26,9 @@ export async function syncPosEvents() {
       const input = {
         id: event.id,
         deviceId: event.deviceId,
-        eventTime: event.eventTime.toISOString(),
         cancelled: event.cancelled,
-        synced: false,
+        synced: true,
+        owner: event.owner,
       };
 
       const res = await fetch(AMPLIFY_API_URL, {
@@ -59,11 +63,10 @@ export async function syncPosEvents() {
 
 export async function syncPosEventProducts() {
   try {
-    // Only products from events that are already synced but products not synced
     const unsyncedProducts = await prisma.posEventProduct.findMany({
       where: {
         event: { synced: true },
-        synced: false, // you’ll need a `synced` field on PosEventProduct
+        synced: false,
       },
     });
 
@@ -74,24 +77,55 @@ export async function syncPosEventProducts() {
         id: product.id,
         posEventId: product.posEventId,
         productId: product.productId,
-        weightGrams: product.weightGrams ?? null,
-        quantity: product.quantity ?? null,
-        priceApplied: product.priceApplied ?? null,
-        synced: false,
+        weightGrams: product.weightGrams,
+        quantity: product.quantity,
+        priceApplied: product.priceApplied,
+        synced: true,
+        owner: product.owner, 
       };
 
-      const res = await fetch(AMPLIFY_API_URL, {
-        method: "POST",
-        headers: API_HEADERS,
-        body: JSON.stringify({
-          query: createPosEventProduct,
-          variables: { input },
-        }),
-      });
+      let json;
+      try {
+        // Try create first
+        const res = await fetch(AMPLIFY_API_URL, {
+          method: "POST",
+          headers: API_HEADERS,
+          body: JSON.stringify({
+            query: createPosEventProduct,
+            variables: { input },
+          }),
+        });
+        json = await res.json();
 
-      const json = await res.json();
+        // If create failed due to conditional check, do update
+        if (
+          json.errors?.some(
+            (e) => e.errorType === "DynamoDB:ConditionalCheckFailedException"
+          )
+        ) {
+          const updateRes = await fetch(AMPLIFY_API_URL, {
+            method: "POST",
+            headers: API_HEADERS,
+            body: JSON.stringify({
+              query: updatePosEventProduct,
+              variables: { input },
+            }),
+          });
+          json = await updateRes.json();
+        }
+      } catch (err) {
+        console.error(
+          `Error sending product ${product.productId} for event ${product.posEventId}:`,
+          err
+        );
+        continue;
+      }
 
-      if (json && !json.errors && json.data?.createPosEventProduct) {
+      if (
+        json &&
+        !json.errors &&
+        (json.data?.createPosEventProduct || json.data?.updatePosEventProduct)
+      ) {
         await prisma.posEventProduct.update({
           where: { id: product.id },
           data: { synced: true },

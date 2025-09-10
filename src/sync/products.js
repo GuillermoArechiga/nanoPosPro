@@ -49,7 +49,6 @@ export async function syncProducts() {
         const created = await prisma.product.create({
           data: {
             ...cleanProd,
-            button: cleanProd.button || "BTN1",
             synced: true,
           },
         });
@@ -74,7 +73,6 @@ export async function syncProducts() {
           where: { id: cleanProd.id },
           data: {
             ...cleanProd,
-            button: cleanProd.button || "BTN1",
             synced: true,
           },
         });
